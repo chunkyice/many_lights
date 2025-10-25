@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "many_lights",
+	"version": "${version}",
+	"name": "ManyLights",
+	"description": "This is my very first mod :D",
+	"authors": [
+		"Icefighter"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/many_lights/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.icefighter.many_lights.ManyLights"
+		],
+		"fabric-datagen": [
+			"net.icefighter.many_lights.ManyLightsDataGenerator"
+		],
+		"client": [
+			"net.icefighter.many_lights.ManyLightsClient"
+		]
+	},
+	"mixins": [
+		"many_lights.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.17.2",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
