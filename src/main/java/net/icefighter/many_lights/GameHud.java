@@ -1,14 +1,14 @@
 package net.icefighter.many_lights;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class GameHud {
@@ -21,7 +21,12 @@ public class GameHud {
 
 
     private void onHudRender(DrawContext ctx, RenderTickCounter tickCounter) {
-        if (ManyLights.playing) {
+        MinecraftServer server = ManyLights.SERVER;
+        if(server != null){
+            ClientPlayerEntity currentPlayer = MinecraftClient.getInstance().player;
+            if (currentPlayer == null) return;
+
+        if (true) {
             final Identifier HUD = Identifier.of(ManyLights.MOD_ID, "textures/ui/hud.png");
             final Identifier HUD_BAR = Identifier.of(ManyLights.MOD_ID, "textures/ui/hud_bar.png");
             final Identifier HUD_BAR_RED = Identifier.of(ManyLights.MOD_ID, "textures/ui/hud_bar_red.png");
@@ -37,20 +42,17 @@ public class GameHud {
 
 
             MinecraftClient client = MinecraftClient.getInstance();
-            if (client.player == null) return; // no player, nothing to render
+            if (currentPlayer == null) return; // no player, nothing to render
 
-
-            //gets the server
-            MinecraftServer server = MinecraftClient.getInstance().getServer();
 
             //this is how big the bar on the ui is based on the game logic's ticks
             int time = (int) (GameLogic.tick / (GameLogic.interval * 20) * 94);
 
             //karama value 4 by default then fetched for the player
             int karma = 4;
-            if (server.getPlayerManager().getPlayer(client.player.getUuid()) != null
-                    && KarmaNbt.getPlayerKarma(Objects.requireNonNull(server.getPlayerManager().getPlayer(client.player.getUuid()))) > 0) {
-                karma = KarmaNbt.getPlayerKarma(Objects.requireNonNull(server.getPlayerManager().getPlayer(client.player.getUuid())));
+            if (server.getPlayerManager().getPlayer(currentPlayer.getUuid()) != null
+                    && KarmaNbt.getPlayerKarma(Objects.requireNonNull(server.getPlayerManager().getPlayer(currentPlayer.getUuid()))) > 0) {
+                karma = KarmaNbt.getPlayerKarma(Objects.requireNonNull(server.getPlayerManager().getPlayer(currentPlayer.getUuid())));
             }
 
             //hud rendering
@@ -81,7 +83,7 @@ public class GameHud {
             }
 
             //put the rule in red or green depending on if you're following it or not
-            if (GameLogic.Rule(client.player, LIGHT)) {
+            if (GameLogic.Rule(currentPlayer, LIGHT)) {
                 ctx.drawTextWithShadow(client.textRenderer, text1, (int) (38 / scale), (int) (20 / scale), 0x0FFF0F);
                 ctx.drawTextWithShadow(client.textRenderer, text2, (int) (38 / scale), (int) (24 / scale), 0x0FFF0F);
             } else {
@@ -93,5 +95,5 @@ public class GameHud {
             // Restore the original transform
             ctx.getMatrices().pop();
         }
-    }
+    }}
 }
